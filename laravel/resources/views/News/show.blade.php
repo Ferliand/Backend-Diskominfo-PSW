@@ -19,7 +19,7 @@
             </div>
             <div class="col-md-12">
                 <select class="form-select mt-3" name="category">
-                    <option selected disabled value="{{ $newslist->category }}">{{ $newslist->category }}</option>
+                    <option selected value="{{ $newslist->category }}">{{ $newslist->category }}</option>
                     <option value="sport">Sport</option>
                     <option value="games">Games</option>
                     <option value="music">Music</option>
