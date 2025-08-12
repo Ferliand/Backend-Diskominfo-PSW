@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
-use App\Http\Requests\StoreNewsRequest;
+use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateNewsRequest;
 
 class NewsController extends Controller
@@ -30,9 +31,29 @@ class NewsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreNewsRequest $request)
+    public function store(Request $request)
     {
-        //
+        $title = 'Daftar Berita';
+        $news = News::all();
+
+        $request->validate([
+            'title' => 'string|required|unique:news|max:255',
+            'content' => 'string|required',
+            'category' => 'string|required'
+        ]);
+
+        $news = News::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'category' => $request->category,
+        ]);
+        // dd($news);
+
+
+        // return view('News.index', compact(['title', 'news']));
+
+        return redirect()->route('News.index')
+            ->with('success', 'Berita berhasil dibuat.');
     }
 
     /**
