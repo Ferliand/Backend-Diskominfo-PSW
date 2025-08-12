@@ -18,10 +18,13 @@ class NewsController extends Controller
         $news = News::all();
         return view('News.index', compact(['news', 'title']));
     }
+    // public function index()
+    // {
+    //     $news = News::all();
+    //     return response()->json($news);
+    // }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         $title = 'Buat Berita Baru';
@@ -47,10 +50,6 @@ class NewsController extends Controller
             'content' => $request->content,
             'category' => $request->category,
         ]);
-        // dd($news);
-
-
-        // return view('News.index', compact(['title', 'news']));
 
         return redirect()->route('News.index')
             ->with('success', 'Berita berhasil dibuat.');
@@ -59,9 +58,11 @@ class NewsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(News $news)
+    public function show($id)
     {
-        //
+        $title = 'Perbarui Baru';
+        $newslist = News::find($id);
+        return view('News.show', compact(['title', 'newslist']));
     }
 
     /**
@@ -75,16 +76,32 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateNewsRequest $request, News $news)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'string|required|max:255',
+            'content' => 'string|required',
+            'category' => 'string|required'
+        ]);
+
+        $newslist = News::where('id', $id)->first();
+        // dd($newslist);
+        $newslist->fill($request->all());
+        $newslist->save();
+
+        return redirect()->route('News.index')
+            ->with('success', 'Berita berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(News $news)
+    public function destroy($id)
     {
-        //
+        $newslist = News::find($id);
+        $newslist->delete();
+
+        return redirect()->route('News.index')
+            ->with('success', 'Berita berhasil dihapus.');
     }
 }

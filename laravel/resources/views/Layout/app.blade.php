@@ -19,4 +19,24 @@
     @yield('content')
 </body>
 
+
+{{-- Notifikasi sukses --}}
+@if (session('success'))
+    <div style="background: #d1fae5; color: #065f46; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+{{-- Notifikasi error --}}
+@if ($errors->any())
+    <div style="background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+        <strong>Terjadi kesalahan:</strong>
+        <ul style="margin: 5px 0 0 20px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 </html>

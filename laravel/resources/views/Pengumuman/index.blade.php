@@ -3,7 +3,7 @@
 @section('content')
     <h1>{{ $title }}</h1>
     <a href="{{ route('index') }}"><button class="btn btn-primary">Kembali ke menu</button></a>
-    <a href="{{ route('News.create') }}"><button class="btn btn-primary">Buat Berita Baru</button></a>
+    <a href="{{ route('Pengumuman.create') }}"><button class="btn btn-primary">Buat {{ $title }}</button></a>
     <table id="news-table" class="table table-striped-columns news-table">
         <thead>
             <tr>
@@ -11,6 +11,8 @@
                 <th>Title</th>
                 <th>Content</th>
                 <th>Category</th>
+                <th>Jumlah</th>
+                <th>Posisis</th>
                 <th>Dibuat Pada</th>
                 <th>Aksi</th>
             </tr>
@@ -20,35 +22,24 @@
                 $no = 1;
             @endphp
 
-            {{-- @foreach (json_decode($news, true) as $newslist)
+            @foreach ($Pengumuman as $pengumumanlist)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td>{{ $newslist['title'] }}</td>
-                    <td>{{ $newslist['content'] }}</td>
-                    <td>{{ $newslist['category'] }}</td>
-                    <td><a href="{{ route('News.show', ['id', $newslist['id']]) }}"><button
-                                class="btn btn-warning">Perbarui</button></a>
-                        <a href="{{ route('News.destroy', ['id', $newslist['id']]) }}"><button
-                                class="btn btn-danger">Delete</button></a>
-                    </td>
-                </tr>
-            @endforeach --}}
-
-            @foreach ($news as $newslist)
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $newslist->title }}</td>
-                    <td>{{ $newslist->content }}</td>
-                    <td>{{ $newslist->category }}</td>
-                    <td>{{ $newslist->created_at->format('y-m-d') }}</td>
-                    <td><a href="{{ route('News.show', $newslist->id) }}"><button
+                    <td>{{ $pengumumanlist->title }}</td>
+                    <td>{{ $pengumumanlist->content }}</td>
+                    <td>{{ $pengumumanlist->category }}</td>
+                    <td>{{ $pengumumanlist->jumlah }}</td>
+                    <td>{{ $pengumumanlist->posisi }}</td>
+                    <td>{{ $pengumumanlist->created_at->format('y-m-d') }}</td>
+                    <td><a href="{{ route('Pengumuman.show', $pengumumanlist->id) }}"><button
                                 class="btn btn-warning">Perbarui</button></a>
 
                         {{-- Modal Delete --}}
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#deleteModal{{ $newslist->id }}">Delete</button>
+                            data-bs-target="#deleteModal{{ $pengumumanlist->id }}">Delete</button>
 
-                        <div class="modal fade" id="deleteModal{{ $newslist->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal{{ $pengumumanlist->id }}" tabindex="-1"
+                            aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header bg-danger text-white">
@@ -58,14 +49,14 @@
                                     </div>
                                     <div class="modal-body text-center">
                                         <p>Yakin ingin menghapus
-                                            <span class="fw-semibold text-red">{{ $newslist->nama_barang }}</span>?
+                                            <span class="fw-semibold text-red">{{ $pengumumanlist->nama_barang }}</span>?
                                         </p>
                                     </div>
                                     <div class="modal-footer justify-content-center">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Batal</button>
-                                        <form action="{{ route('News.destroy', $newslist->id) }}" method="POST"
-                                            onsubmit="showLoading(this)">
+                                        <form action="{{ route('Pengumuman.destroy', $pengumumanlist->id) }}"
+                                            method="POST" onsubmit="showLoading(this)">
                                             @csrf
                                             @method('delete')
                                             <button type="submit" class="btn btn-danger">Hapus</button>
@@ -92,19 +83,25 @@
                                     <div class='modal-body' id="detailBody">
                                         <div id="barangDetail">
                                             <p><strong>Title:</strong>
-                                                {{ $newslist->title }}
+                                                {{ $pengumumanlist->title }}
                                             </p>
                                             <p><strong>Content:</strong>
-                                                {{ $newslist->content }}
+                                                {{ $pengumumanlist->content }}
                                             </p>
                                             <p><strong>category:</strong>
-                                                {{ $newslist->category }}
+                                                {{ $pengumumanlist->category }}
+                                            </p>
+                                            <p><strong>Posisi:</strong>
+                                                {{ $pengumumanlist->posisi }}
+                                            </p>
+                                            <p><strong>Jumlah:</strong>
+                                                {{ $pengumumanlist->jumlah }}
                                             </p>
                                             <p><strong>Dibuat:</strong>
-                                                {{ $newslist->created_at }}
+                                                {{ $pengumumanlist->created_at }}
                                             </p>
                                             <p><strong>diupdate:</strong>
-                                                {{ $newslist->updated_at }}
+                                                {{ $pengumumanlist->updated_at }}
                                             </p>
                                         </div>
                                     </div>
@@ -122,3 +119,47 @@
         </tbody>
     </table>
 @endsection
+
+{{-- @push('scripts')
+    <script>
+        news = @json($news);
+    </script>
+@endpush --}}
+
+
+{{-- <script>
+    $(function() {
+        $('#news-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{!! url('jrData') !!}',
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'title',
+                    name: 'title'
+                },
+                {
+                    data: 'content',
+                    name: 'content'
+                },
+                {
+                    data: 'category',
+                    name: 'category'
+                },
+                // {
+                //     data: 'postal_code',
+                //     name: 'postal_code'
+                // },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ]
+        });
+    });
+</script> --}}
